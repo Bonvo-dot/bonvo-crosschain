@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@polkadot/keyring": "^12.2.1",
     "@talisman-connect/ui": "^1.1.1",
     "@talisman-connect/wallets": "^1.1.3",
     "@talismn/connect-components": "^1.1.7",
