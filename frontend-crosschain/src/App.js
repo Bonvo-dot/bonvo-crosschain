@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { WalletSelect } from "@talismn/connect-components";
 import { PolkadotjsWallet, SubWallet, TalismanWallet, FearlessWallet, EnkryptWallet } from "@talismn/connect-wallets"
@@ -7,7 +7,8 @@ import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 
 
 function App() {
-
+  const [address, setAddress] = useState(null);
+  
 
   // get an array of wallets which are installed
   const Accounts = async () => {
@@ -20,17 +21,28 @@ function App() {
     // returns an array of { address, meta: { name, source } }
     // meta.source contains the name of the extension that provides this account
     const allAccounts = await web3Accounts();
-
+    console.log(address)
     console.log(allAccounts)
   }
 
+  const SelectedAddress = (address) => {
+    setAddress(address);
+  };
+
+  const myClick = () => {
+    console.log(address);
+  }
+
   useEffect(() => {
+    console.log(address);
     Accounts();
+    SelectedAddress(address);
   }, [])
 
   return (
     <div className="App">
-    <WalletSelect
+    {!address ? (
+      <WalletSelect
       dappName={"Talisman"}
       // onlyShowInstalled
       // makeInstallable
@@ -38,7 +50,7 @@ function App() {
         new TalismanWallet(),
         //new SubWallet(),
         //new FearlessWallet(),
-        new EnkryptWallet(),
+        //new EnkryptWallet(),
         new PolkadotjsWallet(),
         //new SubWallet(),
       ]}
@@ -46,7 +58,12 @@ function App() {
       triggerComponent={
         <button>Open Wallets</button>
       }
+      onUpdatedAccounts={(accounts) => { SelectedAddress(accounts[0].address);  }}
     />
+    ) : (
+      <button onClick={() => {console.log(address)}}>counter</button>
+    )}
+    
   </div>
   );
 }

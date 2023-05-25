@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Getting Started with Bonvo Cross-chain
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+install dependencies using --foce
 
 ## Available Scripts
 
