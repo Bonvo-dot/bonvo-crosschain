@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { WalletSelect } from "@talismn/connect-components";
-import { PolkadotjsWallet, SubWallet, TalismanWallet, FearlessWallet, EnkryptWallet } from "@talismn/connect-wallets"
+import { PolkadotjsWallet, TalismanWallet } from "@talismn/connect-wallets"
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { web3Accounts, web3Enable, web3FromAddress  } from '@polkadot/extension-dapp';
-import Keyring from '@polkadot/keyring';
+import { web3Accounts, web3Enable, web3FromSource, web3FromAddress  } from '@polkadot/extension-dapp';
+import { signatureVerify } from '@polkadot/util-crypto';
 
 
 
@@ -20,11 +20,6 @@ function App() {
     // returns an array of all the injected sources
     // (this needs to be called first, before other requests)
     const allInjected = await web3Enable('talisman');
-
-    const allExtensions = allInjected.map(({ name, version }) => `${name} ${version}`);
-
-    // returns an array of { address, meta: { name, source } }
-    // meta.source contains the name of the extension that provides this account
     const allAccounts = await web3Accounts();
     console.log(address)
     console.log(allAccounts)
@@ -47,34 +42,40 @@ function App() {
       console.error('No accounts found. Please install and unlock Polkadot.js extension wallet.');
       return;
     }
-  
-    const account = address; // Select the first account for signing
-  
-    // 4. Create Keyring Instance
-    const keyring = new Keyring({ type: 'sr25519' });
-  
-    // 5. Create the Extrinsic
-    const tx = api.tx(txCall);
-    console.log(account);
-    // 6. Sign the transaction using the extension-dapp wallet
-    const injector = await web3FromAddress(account);
-    console.log(injector)
-    tx.signAndSend(account, { signer: injector.signer }, ({ status, events }) => {
-      if (status.isInBlock) {
-        console.log(`Transaction included in block with hash: ${status.asInBlock}`);
-      } else if (status.isFinalized) {
-        console.log(`Transaction finalized at block hash: ${status.asFinalized}`);
-      } else if (status.isError) {
-        console.error('Transaction error:', status.asError);
-      }
-    });
-  
+
+    const account = accounts[0]; // Select the first account for signing
+    console.log('account:', accounts[0]);
+
+    const injector = await web3FromAddress(account.address);
+    // const injector = await web3FromSource(account.meta.source);
+    const signRaw = injector?.signer?.signRaw;
+    
+    // Option A: First sign message
+    if (!!signRaw) {
+      // after making sure that signRaw is defined
+      // we can use it to sign our message
+      
+      const { signature } = await signRaw({
+          address: account.address,
+          data: txCall,
+          type: 'bytes',
+          version: substrateProvider.EXTRINSIC_VERSION // Added this to prevent error: Unsupported unsigned extrinsic version 116
+      });
+      console.log("Got signed message: ", signature);
+      const { isValid } = signatureVerify(txCall, signature, account.address);
+      console.log("Is valid signature: ", isValid);
+      
+      // NO idea if this is how to send it. 
+    }
+      
+    // Option B: Sign and send message. Fails even before signing with Invalid base58 character "[" (0x5b) at index 0
+    // await api.tx(txCall).signAndSend(account, (result) => {
+    //   if (result.status.isInBlock) {
+    //     console.log(`Transaction included in blockHash ${result.status.asInBlock}`);
+    //   }
+    // });
     api.disconnect();
   };
-
-  const myClick = () => {
-    console.log(address);
-  }
 
   useEffect(() => {
     console.log(address);
@@ -87,17 +88,10 @@ function App() {
     {!address ? (
       <WalletSelect
       dappName={"Talisman"}
-      // onlyShowInstalled
-      // makeInstallable
       walletList={[
         new TalismanWallet(),
-        //new SubWallet(),
-        //new FearlessWallet(),
-        //new EnkryptWallet(),
         new PolkadotjsWallet(),
-        //new SubWallet(),
       ]}
-      // onlyShowInstalled
       triggerComponent={
         <button>Open Wallets</button>
       }
