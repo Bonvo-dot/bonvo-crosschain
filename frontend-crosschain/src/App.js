@@ -3,8 +3,7 @@ import "./App.css";
 import { WalletSelect } from "@talismn/connect-components";
 import { PolkadotjsWallet, TalismanWallet } from "@talismn/connect-wallets"
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { web3Accounts, web3Enable, web3FromSource, web3FromAddress } from '@polkadot/extension-dapp';
-import { signatureVerify } from '@polkadot/util-crypto';
+import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
 
 function App() {
   const [address, setAddress] = useState(null);
@@ -45,32 +44,8 @@ function App() {
     console.log('account:', accounts[0]);
 
     const injector = await web3FromAddress(account.address);
-    // const injector = await web3FromSource(account.meta.source);
-    const signRaw = injector?.signer?.signRaw;
-
-    // Option A: First sign message
-    // if (!!signRaw) {
-    //   // after making sure that signRaw is defined
-    //   // we can use it to sign our message
-
-    //   const { signature } = await signRaw({
-    //       address: account.address,
-    //       data: txCall,
-    //       type: 'bytes',
-    //       version: substrateProvider.EXTRINSIC_VERSION // Added this to prevent error: Unsupported unsigned extrinsic version 116
-    //   });
-    //   console.log("Got signed message: ", signature);
-    //   const { isValid } = signatureVerify(txCall, signature, account.address);
-    //   console.log("Is valid signature: ", isValid);
-
-    //   // NO idea if this is how to send it. 
-    // }
-
-    // Option B: Sign and send message. Fails even before signing with Invalid base58 character "[" (0x5b) at index 0
-    const injector2 = await web3FromAddress(account.address);
-    const signer = injector2.signer;
-    api.setSigner(signer);
-    await api.tx(txCall).signAndSend(account.address, { signer }, (result) => {
+    api.setSigner(injector.signer);
+    await api.tx(txCall).signAndSend(account.address, (result) => {
       if (result.status.isInBlock) {
         console.log(`Transaction included in blockHash ${result.status.asInBlock}`);
       }
