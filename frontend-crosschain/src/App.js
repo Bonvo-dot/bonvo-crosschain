@@ -84,23 +84,76 @@ function App() {
     SelectedAddress(address);
   }, [])
 
+  const [buttonText, setButtonText] = useState('Open Wallet');
+  const [buttonClicked, setButtonClicked] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const handleClick = () => {
+    setButtonClicked(!buttonClicked);
+    debugger;
+
+    if (!address) {
+      setButtonText('Try It');
+    } else {
+      sendXCM();
+      setButtonDisabled(true);
+    }
+
+    // Add functionality for the button click here
+  };
+
   return (
     <div className="App">
-      {!address ? (
-        <WalletSelect
-          dappName={"Talisman"}
-          walletList={[
-            new TalismanWallet(),
-            new PolkadotjsWallet(),
-          ]}
-          triggerComponent={
-            <button>Open Wallets</button>
+
+
+      <div className="container">
+        <header>
+          <img src="https://static.wixstatic.com/media/04671a_4e5e50c23d7d4af68347b565ba1bdbed~mv2.png/v1/fill/w_1000,h_123,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/04671a_4e5e50c23d7d4af68347b565ba1bdbed~mv2.png" className="logo" alt="logo" />
+          <h1 className="title">Bonvo Rental POC</h1>
+          <h2 className="subtitle">Cross-Chain XCM proof of concept to use the moonbase Uniswap functionality</h2>
+        </header>
+        <main>
+          <p className="description">
+            Implementing XCM features is crucial for our platform as it enhances interoperability and expands the functionality of our blockchain ecosystem. By integrating XCM, we can seamlessly communicate and interact with other blockchains within the Polkadot ecosystem, tapping into Moonbeam's EVM and unlocking collaboration opportunities. This enables our platform to leverage the benefits of multiple chains, bridge the gap between networks, and provide enhanced services and user experiences. Overall, XCM empowers our platform to be an innovative player in the blockchain landscape, fostering growth and expanding possibilities for our users.</p>
+
+          {!address ?
+            <WalletSelect
+              dappName={"Talisman"}
+              walletList={[
+                new TalismanWallet(),
+                new PolkadotjsWallet(),
+              ]}
+              triggerComponent={
+                <button
+                  className={`cta-button`}
+                  onClick={handleClick}
+                  disabled={buttonDisabled}
+                >
+                  {buttonText}
+                </button>
+              }
+              onUpdatedAccounts={(accounts) => { SelectedAddress(accounts[0].address); }}
+            />
+            : <button
+              className={`cta-button clicked`}
+              onClick={handleClick}
+              disabled={buttonDisabled}
+            >
+              {buttonText}
+            </button>
           }
-          onUpdatedAccounts={(accounts) => { SelectedAddress(accounts[0].address); }}
-        />
-      ) : (
-        <button onClick={async () => { await sendXCM() }}>counter</button>
-      )}
+
+        </main>
+        <footer>
+          <p>Created byBonvo</p>
+
+          <a href="https://bonvonft.com"><img src="https://www.bonvonft.com/assets/img/logo_floating.png" className="logo" alt="logo" /></a>
+          <p>&copy; 2023 Bonvo. All rights reserved.</p>
+        </footer>
+      </div>
+
+
+
 
     </div>
   );
