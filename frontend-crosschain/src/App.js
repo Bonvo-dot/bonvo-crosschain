@@ -114,7 +114,12 @@ function App() {
         </header>
         <main>
           <p className="description">
-            Implementing XCM features is crucial for our platform as it enhances interoperability and expands the functionality of our blockchain ecosystem. By integrating XCM, we can seamlessly communicate and interact with other blockchains within the Polkadot ecosystem, tapping into Moonbeam's EVM and unlocking collaboration opportunities. This enables our platform to leverage the benefits of multiple chains, bridge the gap between networks, and provide enhanced services and user experiences. Overall, XCM empowers our platform to be an innovative player in the blockchain landscape, fostering growth and expanding possibilities for our users.</p>
+            Implementing XCM features is crucial for our platform as it enhances interoperability and expands the functionality of our blockchain ecosystem. By integrating XCM, we can seamlessly communicate and interact with other blockchains within the Polkadot ecosystem, tapping into Moonbeam's EVM and unlocking collaboration opportunities. This enables our platform to leverage the benefits of multiple chains, bridge the gap between networks, and provide enhanced services and user experiences. Overall, XCM empowers our platform to be an innovative player in the blockchain landscape, fostering growth and expanding possibilities for our users.
+            <br /><br />
+            <b>Reference:</b>
+            <br /> Info on XCM and Moonbase: <a href="https://docs.moonbeam.network/tutorials/interoperability/uniswapv2-swap-xcm/">Uniswap V2 Swap from Polkadot via XCM</a>
+            <br />info cross-chain messaging: <a href="https://docs.moonbeam.network/learn/features/xchain-plans/">Cross-Chain integration</a>
+          </p>
 
           {!address ?
             <WalletSelect
@@ -145,7 +150,7 @@ function App() {
 
         </main>
         <footer>
-          <p>Created byBonvo</p>
+          <p>Created by</p>
 
           <a href="https://bonvonft.com"><img src="https://www.bonvonft.com/assets/img/logo_floating.png" className="logo" alt="logo" /></a>
           <p>&copy; 2023 Bonvo. All rights reserved.</p>
