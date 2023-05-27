@@ -1,6 +1,6 @@
 # Getting Started with Bonvo Cross-chain
 
-install dependencies using --foce
+install dependencies using --force
 
 ## Available Scripts
 
